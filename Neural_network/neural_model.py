@@ -14,15 +14,19 @@ sections = config.sections()
 # config.get(sections[0], config.options(sections[0]))
 
 class SequentialModel:
-    """ A sequential model is appropriate for a plain stack of layers where each layer has exactly one input tensor and one output tensor """
+    """
+        A sequential model is appropriate for a plain stack of layers where each layer
+        has exactly one input tensor and one output tensor
+    """
 
     # Define sequential model
     # for i in range(1,config.get('Sequential Model', layers)+1):
     #     exec(f'layer_{i} = {i}')
     model = keras.Sequential(
         [
-            layers.Dense(32, activation="relu", name="layer1", input_shape=(784,)), # relu - nonlinear function
-            layers.Dense(10, activation="softmax", name="layer2")
+            layers.Dense(16, activation="relu", name="layer1", input_shape=(int(config.get('Input and output tensors', 'input_tensor_shape')),)), # relu - nonlinear function
+            layers.Dense(16, activation="relu", name="layer2"),
+            layers.Dense(1, activation="sigmoid", name="layer3")
         ]
     )
     number_of_weights = len(model.weights)
@@ -39,9 +43,10 @@ class FunctionalAPI:
         The main idea is that a DL model is usually a directed acyclic graph (DAG) of layers. The functional API is a way to build graphs of layers.
      """
 
-    input_tensor = layers.Input(shape=(784,))
-    x = layers.Dense(32, activation="relu")(input_tensor)
-    output_tensor = layers.Dense(10, activation="softmax")(x)
+    input_tensor = layers.Input(shape=(int(config.get('Input and output tensors', 'input_tensor_shape')),))
+    y = layers.Dense(16, activation="relu")(input_tensor)
+    x = layers.Dense(16, activation="relu")(y)
+    output_tensor = layers.Dense(1, activation="softmax")(x)
 
     model = keras.Model(inputs=input_tensor, outputs=output_tensor)
     model_summary = model.summary
