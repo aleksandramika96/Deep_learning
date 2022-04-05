@@ -9,6 +9,8 @@
 # libraries
 from keras.preprocessing.image import ImageDataGenerator as IDG
 import configparser
+import h5py
+from cnn_model_cats_and_dogs import model
 
 config = configparser.ConfigParser()
 config.read("configfile.ini")
@@ -35,6 +37,20 @@ validation_generator = test_datagen.flow_from_directory(
 )
 
 for data_batch, labels_batch in train_generator:
-    print('kształt danych wsadowych: ', data_batch.shape)
-    print('kształt etykiet danych wsadowych:', labels_batch.shape)
+    print('kształt danych wsadowych: ', data_batch.shape) # (20, 150, 150, 3)
+    print('kształt etykiet danych wsadowych:', labels_batch.shape) # (20,)
     break
+
+
+# Model fitting using data batch generator
+# fit generator - is a method that expects a generator to be defined that returns batches of input data and their labels in an infinity loop
+# step per epoch - data are generated infinitely so the keras model has to know how many samples to take from the generator before the end of the epoch
+history = model.fit_generator(
+    train_generator,
+    steps_per_epoch=100, # in our case batches consist of 20 samples, so we need to generate 100 batches in order to train the model for 2000 samples
+    epochs=30,
+    validation_data=validation_generator,
+    validation_steps=50) # number of batches to be extracted from the validation data generator
+
+# It is good practice to save all trained models
+model.save('trained_models/cats_and_dogs_small_1.h5')
