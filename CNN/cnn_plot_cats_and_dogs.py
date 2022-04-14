@@ -2,7 +2,7 @@
 
 # libraries
 import matplotlib.pyplot as plt
-from cnn_load_data_cats_and_dogs import history
+from cnn_load_and_train_data_cats_and_dogs import history
 
 acc = history.history['acc']
 val_acc = history.history['val_acc']
